@@ -140,4 +140,18 @@
     <string name="pref_user_updating_key">updating</string>
     <string name="pref_service_updating_key">service_updating</string>
     <string name="pref_logging_in_key">logging</string>
+
+    <string name="causes">\t\t\t\t\t在桂电生活和学习的两年间，我们发现，桂电生活虽然多姿多彩，但是我们要想获取什么信息却很繁琐，比如成绩查询，比如考试信息，再比如上课安排等等。\n\t\t\t\t\t有没有什么手段让我们可以快速的获取信息呢？基于这样的想法，本款软件应运而生。\n</string>
+    <string name="goal">\t\t\t\t\t目的就是为了让学生们轻松获得自己想要的信息，不管是考试成绩，还是上课安排，只需小手轻轻一点，大量的信息都会汇总并显示出来。\n</string>
+    <string name="future">\t\t\t\t\t目前“GUET课程表”还处于测试阶段，有许多地方存在缺陷，我们将持续推出新版本，不断地完善APP的功能，满足不同用户的需求。\n
+        \t\t\t\t\t\t\t\t\t\t未来预期功能：\n
+        \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t支持WebVPN登陆\n
+        \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t已选课程查询\n
+        \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t学分绩查询\n
+        \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t毕业学位评估\n
+        \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t毕业所需学分查询\n
+        \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t消息提醒\n
+        \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t实验成绩查询\n</string>
+    <string name="member">\t\t\t\t\t组长：谭凌风\n\t\t\t\t\t组员：潘鹏宇 &amp; 石俊杰 &amp; 唐远军\n</string>
+    <string name="more">\t\t\t\t\t本app研发灵感来自于“桂电课程表”，对此表示感谢！\n\t\t\t\t\t本app由小组内人员共同研发完成，与学校官方无关。\n\t\t\t\t\t因为app还在不断的试错与完善中，但凡有运行出错的小伙伴们记得联系我们，我们会尽快解决错误，联系方式请点击右上方的按钮。</string>
 </resources>
