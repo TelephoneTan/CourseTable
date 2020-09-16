@@ -17,7 +17,7 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="133dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/guet_text_trans" />
