@@ -16,10 +16,11 @@
             tools:ignore="MissingConstraints"
             android:orientation="vertical">
 
-            <TextView
-                android:background="@drawable/guet_text_trans"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="133dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/guet_text_trans" />
 
             <TextView
                 android:id="@+id/aboutus"
