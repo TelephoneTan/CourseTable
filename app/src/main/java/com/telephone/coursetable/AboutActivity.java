@@ -70,7 +70,7 @@ public class AboutActivity extends AppCompatActivity {
     }
 
     public boolean joinGitHub() {
-        Uri uri = Uri.parse("https://github.com/Telephone2019/CourseTable/releases");
+        Uri uri = Uri.parse("https://github.com/Telephone2019/CourseTable");
         try {
             AboutActivity.this.startActivity(new Intent(Intent.ACTION_VIEW, uri));
             return true;
