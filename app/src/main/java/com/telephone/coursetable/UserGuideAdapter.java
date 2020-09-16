@@ -45,17 +45,31 @@ public class UserGuideAdapter extends RecyclerView.Adapter<UserGuideAdapter.View
     @Override
     public void onBindViewHolder(@NonNull UserGuideAdapter.ViewPagerViewHolder holder, int position) {
         if(position==imgIdArray.size()){
-            holder.textView3.setText("b");
+            holder.textView3.setText("我们提供的一些功能需要用户手动让APP加入后台运行白名单。\n" +
+                    "一般加入后台运行白名单需要用到四个设置：电池设置、启动管理、手机管家白名单设置、后台运行应用设置:\n" +
+                    "　　1.将省电模式切换为关闭\n" +
+                    "　　2.在后台节能将此应用更改为无限制\n" +
+                    "　　3.在启动管理将此应用设置为开机自启动，后台自启动\n" +
+                    "　　4.在多任务页面将此应用上锁以避免被系统误杀\n" +
+                    "　　5.加入手机管家白名单\n" +
+                    "　　6.在手机设置中允许此应用后台运行\n" +
+                    "各品牌手机间存在差异，若上述步骤不能让APP保持后台运行，需要您自行搜索解决。" +
+                    "后续我们将提供各品牌手机加入白名单的详细步骤。");
             String S =String.valueOf(position+1)+"/"+String.valueOf(imgIdArray.size()+1);
             holder.textView2.setText(S);
-            holder.imageView.setVisibility(View.GONE);
-            holder.textView.setVisibility(View.GONE);
+            holder.imageView.setVisibility(View.INVISIBLE);
+            holder.textView.setVisibility(View.INVISIBLE);
+            holder.textView3.setVisibility(View.VISIBLE);
         }
         else {
             holder.imageView.setImageResource(imgIdArray.get(position));
             holder.textView.setText(title.get(position));
             String S =String.valueOf(position+1)+"/"+String.valueOf(imgIdArray.size()+1);
             holder.textView2.setText(S);
+            holder.textView.setVisibility(View.VISIBLE);
+            holder.imageView.setVisibility(View.VISIBLE);
+            holder.textView3.setVisibility(View.INVISIBLE);
+
         }
     }
 
