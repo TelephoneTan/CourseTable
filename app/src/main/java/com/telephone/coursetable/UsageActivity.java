@@ -28,7 +28,6 @@ public class UsageActivity extends AppCompatActivity {
         MyApp.setRunning_activity(MyApp.RunningActivity.USAGE);
         MyApp.setRunning_activity_pointer(this);
         setContentView(R.layout.activity_usage);
-        this.setTitle(R.string.user_guide);
         viewPager = (ViewPager2) findViewById(R.id.viewpage);
         userGuideAdapter = new UserGuideAdapter();
         viewPager.setAdapter(userGuideAdapter);
