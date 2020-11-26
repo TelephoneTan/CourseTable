@@ -22,10 +22,10 @@ public class GraduationDegreeEvaluation {
     private double xfj;//   学分绩
     private String cet;//   毕业计算等级考试名称
     private String cetcj;// 毕业计算等级考试成绩
-    private double cetpass;
-    private double graduate;
-    private double degree;
-    private double checked;
+    private long cetpass;
+    private long graduate;
+    private long degree;
+    private long checked;
     private double fpjf;//  外语平均分
     private String comm;
     private double cjxf;
