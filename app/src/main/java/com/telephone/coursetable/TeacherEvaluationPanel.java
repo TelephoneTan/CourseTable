@@ -151,6 +151,7 @@ public class TeacherEvaluationPanel extends AppCompatActivity {
                 }).start();
                 break;
             case R.id.go_to_query_graduation_degree:
+                new Thread(()-> Byxw.Byxw_Query(TeacherEvaluationPanel.this)).start();
                 break;
         }
         return true;

@@ -14,6 +14,7 @@ import com.telephone.coursetable.Database.UserDao;
 import com.telephone.coursetable.Fetch.LAN;
 import com.telephone.coursetable.Gson.GraduationDegreeEvaluation;
 import com.telephone.coursetable.Gson.GraduationDegreeEvaluation_s;
+import com.telephone.coursetable.Gson.GraduationFee;
 import com.telephone.coursetable.Http.Get;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Http.Post;
@@ -36,6 +37,7 @@ public class Byxw {
         String id = udao.getActivatedUser().get(0).username;
         String pwd = udao.getActivatedUser().get(0).password;
         String cookie = "";
+        printlog(c,"正在登录中~");
         while (true) {
             HttpConnectionAndCode hcac = LAN.checkcode(c);
             if (hcac.obj == null) {
@@ -68,6 +70,7 @@ public class Byxw {
         String referer = "http://172.16.13.22/Login/MainDesktop";
         String user_agent = c.getResources().getString(R.string.user_agent);
 
+        printlog(c,"正在进行财务费用更新~");
         HttpConnectionAndCode money_res = Post.post(
                 "http://172.16.13.22/student/genstufee/",
                 null,
@@ -86,8 +89,17 @@ public class Byxw {
             end(c, "财务费用更新失败。请检查校园网连接后重试。");
             return true;
         }
+
+        GraduationFee gf = new Gson().fromJson(money_res.comment,GraduationFee.class);
+        printlog(c,"您的财务费用信息如下：");
+        printlog(c,"---------------------------");
+        printlog(c,gf.getMsg());
+        printlog(c,"---------------------------");
+
+        printlog(c,"正在毕业采集中~");
         List<TermInfo> termlist = tdao.selectAll();
         for(TermInfo term : termlist){
+            printlog(c,"正在采集"+term.termname+"的信息");
             HttpConnectionAndCode make_term_res = Post.post(
                     "http://172.16.13.22/student/genstuby/" + term.term,
                     null,
@@ -107,6 +119,7 @@ public class Byxw {
                 return true;
             }
         }
+        printlog(c,"正在查询您的毕业学位信息~");
         HttpConnectionAndCode query_res = Get.get(
                 "http://172.16.13.22/student/getbyxw",
                 null,
@@ -125,12 +138,17 @@ public class Byxw {
             end(c, "查询失败。请检查校园网连接后重试。");
             return true;
         }
+        printlog(c,"查询成功~");
+        printlog(c,"----------------------------------------------");
         GraduationDegreeEvaluation data = new Gson().fromJson(query_res.comment, GraduationDegreeEvaluation_s.class).getData().get(0);
-        printlog(c, "等级考试成绩：" + data.getCet() + "：" + data.getCetshow());
+        printlog(c, "等级考试成绩：");
+        printlog(c,"[ "+data.getCetshow()+" ]");
+        printlog(c,"折算等级考试成绩：");
+        printlog(c,"[ "+data.getCet()+"："+data.getCetcj()+" ]");
         printlog(c, "学分绩：" + data.getXfj());
         printlog(c, "外语平均分：" + data.getFpjf());
         printlog(c, "备注：" + data.getComm());
-        end(c, "");
+        end(c, "----------------------------------------------");
         return true;
     }
 
