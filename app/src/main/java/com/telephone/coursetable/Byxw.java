@@ -60,14 +60,13 @@ public class Byxw {
         while (true) {
             //
             if(check_quit(c)){
-                LogMe.e(NAME, "Byxw thread stop");
                 end(c,"");
-                setByxw_thread_running(false);    return true;
+                return duel_quit(c,NAME);
             }
             HttpConnectionAndCode hcac = LAN.checkcode(c);
             if (hcac.obj == null) {
                 end(c, "登录失败，请检查校园网连接后重试。");
-                return true;
+                return duel_quit(c,NAME);
             }
 
             cookie = hcac.cookie;
@@ -76,7 +75,8 @@ public class Byxw {
             String ckcode = OCR.getTextFromBitmap(c, bitmap, MyApp.ocr_lang_code);
             //
             if(check_quit(c)){
-
+                end(c,"");
+                return duel_quit(c,NAME);
             }
             HttpConnectionAndCode login_res = Login.login(c, id, pwd, ckcode, cookie, stringBuilder);
             if (login_res.code != 0) {
@@ -85,11 +85,11 @@ public class Byxw {
                         continue;
                     } else {
                         end(c, "登录失败，密码错误。请更新重新登录以您的学分制系统密码。");
-                        return true;
+                        return duel_quit(c,NAME);
                     }
                 } else {
                     end(c, "登录失败，请检查校园网连接后重试。");
-                    return true;
+                    return duel_quit(c,NAME);
                 }
             }
             cookie = stringBuilder.toString();
@@ -102,7 +102,8 @@ public class Byxw {
         printlog(c,"正在进行财务费用更新~");
         //
         if(check_quit(c)){
-
+            end(c,"");
+            return duel_quit(c,NAME);
         }
         HttpConnectionAndCode money_res = Post.post(
                 "http://172.16.13.22/student/genstufee/",
@@ -120,7 +121,7 @@ public class Byxw {
         );
         if (money_res.code != 0){
             end(c, "财务费用更新失败。请检查校园网连接后重试。");
-            return true;
+            return duel_quit(c,NAME);
         }
 
         GraduationFee gf = new Gson().fromJson(money_res.comment,GraduationFee.class);
@@ -132,7 +133,8 @@ public class Byxw {
         printlog(c,"正在获取毕业条件~");
         //
         if(check_quit(c)){
-
+            end(c,"");
+            return duel_quit(c,NAME);
         }
         HttpConnectionAndCode con_res = Get.get(
                 "http://172.16.13.22/comm/getsctxw",
@@ -150,7 +152,7 @@ public class Byxw {
         );
         if(con_res.code != 0){
             end(c,"毕业条件获取失败。请检查校园网连接后重试。");
-            return true;
+            return duel_quit(c,NAME);
         }
         printlog(c,"毕业条件如下：");
         printlog(c,"*************************");
@@ -168,7 +170,8 @@ public class Byxw {
             printlog(c,"正在采集"+term.termname+"的信息");
             //
             if(check_quit(c)){
-
+                end(c,"");
+                return duel_quit(c,NAME);
             }
             HttpConnectionAndCode make_term_res = Post.post(
                     "http://172.16.13.22/student/genstuby/" + term.term,
@@ -186,13 +189,14 @@ public class Byxw {
             );
             if (make_term_res.code != 0){
                 end(c, "毕业采集失败。请检查校园网连接后重试。");
-                return true;
+                return duel_quit(c,NAME);
             }
         }
         printlog(c,"正在查询您的毕业学位信息~");
         //
         if(check_quit(c)){
-
+            end(c,"");
+            return duel_quit(c,NAME);
         }
         HttpConnectionAndCode query_res = Get.get(
                 "http://172.16.13.22/student/getbyxw",
@@ -210,7 +214,7 @@ public class Byxw {
         );
         if (query_res.code != 0){
             end(c, "查询失败。请检查校园网连接后重试。");
-            return true;
+            return duel_quit(c,NAME);
         }
         printlog(c,"查询成功~");
         printlog(c,">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
@@ -223,6 +227,7 @@ public class Byxw {
         printlog(c, "外语平均分：" + data.getFpjf());
         printlog(c, "备注：" + data.getComm());
         end(c, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        setByxw_thread_running(false);
         return true;
     }
 
@@ -240,5 +245,11 @@ public class Byxw {
                 MyApp.getRunning_activity_pointer() == null ||
                         !c.toString().equals(MyApp.getRunning_activity_pointer().toString()) ||
                         !byxw_class.cast(c).isVisible();
+    }
+
+    public static boolean duel_quit(@NonNull AppCompatActivity c,String NAME){
+        LogMe.e(NAME, "Byxw thread stop");
+        setByxw_thread_running(false);
+        return true;
     }
 }
