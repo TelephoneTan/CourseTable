@@ -3,11 +3,11 @@ package com.telephone.coursetable.Gson;
 import java.util.List;
 
 public class GraduationCondition_s {
-    private String success;
+    private boolean success;
     private long total;
     private List<GraduationCondition> data;
 
-    public String getSuccess() {
+    public boolean isSuccess() {
         return success;
     }
 

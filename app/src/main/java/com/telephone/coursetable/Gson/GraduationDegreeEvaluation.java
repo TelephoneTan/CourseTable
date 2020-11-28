@@ -98,19 +98,19 @@ public class GraduationDegreeEvaluation {
         return cetcj;
     }
 
-    public double getCetpass() {
+    public long getCetpass() {
         return cetpass;
     }
 
-    public double getGraduate() {
+    public long getGraduate() {
         return graduate;
     }
 
-    public double getDegree() {
+    public long getDegree() {
         return degree;
     }
 
-    public double getChecked() {
+    public long getChecked() {
         return checked;
     }
 

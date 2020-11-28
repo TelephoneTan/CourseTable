@@ -117,7 +117,7 @@ public class Byxw {
             return duel_quit(c,NAME,"财务费用更新失败。请检查校园网连接后重试。");
         }
 
-        GraduationFee gf = new Gson().fromJson(money_res.comment,GraduationFee.class);
+        GraduationFee gf = MyApp.gson.fromJson(money_res.comment,GraduationFee.class);
         printlog(c,"您的财务费用信息如下：");
         printlog(c,"---------------------------");
         printlog(c,gf.getMsg());
@@ -147,7 +147,7 @@ public class Byxw {
         }
         printlog(c,"毕业条件如下：");
         printlog(c,"*************************");
-        GraduationCondition_s gcs = new Gson().fromJson(con_res.comment,GraduationCondition_s.class);
+        GraduationCondition_s gcs = MyApp.gson.fromJson(con_res.comment,GraduationCondition_s.class);
         List<GraduationCondition> gc_list = gcs.getData();
         for(GraduationCondition gc : gc_list){
             printlog(c,gc.getComm());
@@ -205,7 +205,7 @@ public class Byxw {
         }
         printlog(c,"查询成功~");
         printlog(c,">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        GraduationDegreeEvaluation data = new Gson().fromJson(query_res.comment, GraduationDegreeEvaluation_s.class).getData().get(0);
+        GraduationDegreeEvaluation data = MyApp.gson.fromJson(query_res.comment, GraduationDegreeEvaluation_s.class).getData().get(0);
         printlog(c, "等级考试成绩：");
         printlog(c,"[ "+data.getCetshow()+" ]");
         printlog(c,"折算等级考试成绩：");
