@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
+import android.net.Proxy;
 import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
@@ -36,8 +37,12 @@ import com.telephone.coursetable.Http.Get;
 import com.telephone.coursetable.Http.HttpConnectionAndCode;
 import com.telephone.coursetable.Https.Post;
 import com.telephone.coursetable.LogMe.LogMe;
+import com.telephone.coursetable.proxy.MyProxy;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.net.ssl.SSLSocketFactory;
 
@@ -71,24 +76,25 @@ public class MyApp extends Application {
     private volatile static boolean running_login_thread = false;
     private volatile static boolean running_fetch_service = false;
 
-    public enum RunningActivity{
+    public enum RunningActivity {
         MAIN, LOGIN, LOGIN_VPN, FUNCTION_MENU, CHANGE_HOURS, CHANGE_TERMS, LIBRARY, ABOUT, USAGE,
         WEB_LINKS, GUET_MUSIC, GUET_PHONE, WEB_INFO, IMAGE_MAP, GRADE_POINTS, TEST, COURSE_CARD,
         EDIT_COURSE, TEACHER_EVALUATION_PANEL, COMMENT, NULL
     }
+
     private volatile static RunningActivity running_activity = RunningActivity.NULL;
     private volatile static AppCompatActivity running_activity_pointer = null;
 
-    public static synchronized void clearRunningActivity(AppCompatActivity ac){
+    public static synchronized void clearRunningActivity(AppCompatActivity ac) {
         final String NAME = "clearRunningActivity()";
-        if (ac != null){
+        if (ac != null) {
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "on destroy activity pointer = " + ac.toString());
         }
-        if (running_activity_pointer != null){
+        if (running_activity_pointer != null) {
             com.telephone.coursetable.LogMe.LogMe.e(NAME, "cached running activity: " + running_activity + " pointer = " + running_activity_pointer.toString());
         }
-        if (ac != null && running_activity_pointer != null){
-            if (ac.toString().equals(running_activity_pointer.toString())){
+        if (ac != null && running_activity_pointer != null) {
+            if (ac.toString().equals(running_activity_pointer.toString())) {
                 running_activity = RunningActivity.NULL;
                 com.telephone.coursetable.LogMe.LogMe.e(NAME, "remove cached running activity pointer = " + running_activity_pointer.toString());
                 running_activity_pointer = null;
@@ -194,7 +200,7 @@ public class MyApp extends Application {
             "明天: 第四大节 (下午)",
             "明天: 第五大节 (晚上)"
     };
-    final public static String[] times = {"1","2","3","4","5"};
+    final public static String[] times = {"1", "2", "3", "4", "5"};
     final public static int[] timetvIds = {
             R.id.textView_time1, //times[0]
             R.id.textView_time2, //times[1]
@@ -212,11 +218,11 @@ public class MyApp extends Application {
             R.id.textView_wd7
     };
     final public static int[][] nodeIds = {
-            {R.id.textView1,R.id.textView2,R.id.textView3,R.id.textView4,R.id.textView5,R.id.textView6,R.id.textView7},//times[0]
-            {R.id.textView8,R.id.textView9,R.id.textView10,R.id.textView11,R.id.textView12,R.id.textView13,R.id.textView14},//times[1]
-            {R.id.textView15,R.id.textView16,R.id.textView17,R.id.textView18,R.id.textView19,R.id.textView20,R.id.textView21},//times[2]
-            {R.id.textView22,R.id.textView23,R.id.textView24,R.id.textView25,R.id.textView26,R.id.textView27,R.id.textView28},//times[3]
-            {R.id.textView29,R.id.textView30,R.id.textView31,R.id.textView32,R.id.textView33,R.id.textView34,R.id.textView35}//times[4]
+            {R.id.textView1, R.id.textView2, R.id.textView3, R.id.textView4, R.id.textView5, R.id.textView6, R.id.textView7},//times[0]
+            {R.id.textView8, R.id.textView9, R.id.textView10, R.id.textView11, R.id.textView12, R.id.textView13, R.id.textView14},//times[1]
+            {R.id.textView15, R.id.textView16, R.id.textView17, R.id.textView18, R.id.textView19, R.id.textView20, R.id.textView21},//times[2]
+            {R.id.textView22, R.id.textView23, R.id.textView24, R.id.textView25, R.id.textView26, R.id.textView27, R.id.textView28},//times[3]
+            {R.id.textView29, R.id.textView30, R.id.textView31, R.id.textView32, R.id.textView33, R.id.textView34, R.id.textView35}//times[4]
     };
     final public static int[] restLineIds = {
             R.id.main_rest_01,
@@ -267,8 +273,8 @@ public class MyApp extends Application {
 
         FetchService.startAction_START_FETCH_DATA(this, service_fetch_interval, null);
 
-        new Thread(()->{
-            if (getCurrentAppDB().versionDao().selectVersion(BuildConfig.VERSION_NAME).isEmpty()){
+        new Thread(() -> {
+            if (getCurrentAppDB().versionDao().selectVersion(BuildConfig.VERSION_NAME).isEmpty()) {
                 HttpConnectionAndCode report_res = Post.post(
                         "https://guetcob.com:44334/reportversion",
                         null,
@@ -283,22 +289,22 @@ public class MyApp extends Application {
                         null,
                         true
                 );
-                if (report_res.code == 0){
+                if (report_res.code == 0) {
                     getCurrentAppDB().versionDao().insert(new Version(BuildConfig.VERSION_NAME));
                 }
             }
         }).start();
     }
 
-    public static MyApp getCurrentApp(){
+    public static MyApp getCurrentApp() {
         return app;
     }
 
-    public static AppDatabase getCurrentAppDB(){
+    public static AppDatabase getCurrentAppDB() {
         return db;
     }
 
-    public static AppTestDatabase getCurrentAppDB_Test(){
+    public static AppTestDatabase getCurrentAppDB_Test() {
         return db_test;
     }
 
@@ -314,32 +320,33 @@ public class MyApp extends Application {
         return db_comments;
     }
 
-    public static SharedPreferences getCurrentSharedPreference(){
+    public static SharedPreferences getCurrentSharedPreference() {
         return sp;
     }
 
-    public static SharedPreferences getCurrentSharedPreference_Test(){
+    public static SharedPreferences getCurrentSharedPreference_Test() {
         return sp_test;
     }
 
-    public static SharedPreferences.Editor getCurrentSharedPreferenceEditor(){
+    public static SharedPreferences.Editor getCurrentSharedPreferenceEditor() {
         return editor;
     }
 
-    public static SharedPreferences.Editor getCurrentSharedPreferenceEditor_Test(){
+    public static SharedPreferences.Editor getCurrentSharedPreferenceEditor_Test() {
         return editor_test;
     }
 
-    public static ApplicationInfo getApplicationInfo_me(){
+    public static ApplicationInfo getApplicationInfo_me() {
         return app_info;
     }
 
-    public static boolean isDebug(){
+    public static boolean isDebug() {
         return ((MyApp.getApplicationInfo_me().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0);
     }
 
-    public static boolean isLAN(){
-        return Get.get(
+    public static boolean isLAN() {
+        setProxy(false);
+        HttpConnectionAndCode res = Get.get(
                 "http://172.16.13.22/",
                 null,
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36",
@@ -352,7 +359,10 @@ public class MyApp extends Application {
                 null,
                 500,
                 500
-        ).resp_code == 200;
+        );
+        boolean b = res.resp_code == 200;
+        if (!b) setProxy(true);
+        return b;
     }
 
     public static void batteryOptimization(AppCompatActivity c) {
@@ -360,8 +370,27 @@ public class MyApp extends Application {
         PowerManager pm = (PowerManager) c.getSystemService(Context.POWER_SERVICE);
         if (!pm.isIgnoringBatteryOptimizations(pac_name)) {
             c.startActivity(new Intent(ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:" + pac_name)));
-        }else {
-            c.runOnUiThread(()-> Toast.makeText(c, "忽略电池优化已设置成功", Toast.LENGTH_LONG).show());
+        } else {
+            c.runOnUiThread(() -> Toast.makeText(c, "忽略电池优化已设置成功", Toast.LENGTH_LONG).show());
         }
     }
+
+    private static Map<Integer, MyProxy> proxyMap = new HashMap<>();
+
+    public static Map<Integer, MyProxy> getProxyMap() {
+        if (proxyMap == null)
+            proxyMap = new HashMap<>();
+        return proxyMap;
+    }
+
+    private static boolean proxy = false;
+
+    public static boolean isProxy() {
+        return proxy;
+    }
+
+    public static void setProxy(boolean proxy) {
+        MyApp.proxy = proxy;
+    }
 }
+

@@ -19,6 +19,8 @@ public class LAN {
      * @clear
      */
     public static HttpConnectionAndCode checkcode(Context c){
+
+
         Resources r = c.getResources();
         return GetBitmap.get(
                 r.getString(R.string.lan_get_checkcode_url),

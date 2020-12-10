@@ -7,9 +7,12 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.telephone.coursetable.proxy.ProxyUtil;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.ConnectException;
 import java.net.CookieManager;
 import java.net.HttpCookie;
 import java.net.HttpURLConnection;
@@ -22,13 +25,12 @@ import java.util.zip.GZIPInputStream;
 
 public class GetBitmap {
     /**
-     * @non-ui
-     * @return
-     * - 0 GET success
+     * @return - 0 GET success
      * - -1 cannot open url
      * - -5 cannot get response
      * - -6 response check fail
      * - -7 302
+     * @non-ui
      * @clear
      */
     public static HttpConnectionAndCode get(@NonNull final String u,
@@ -36,15 +38,18 @@ public class GetBitmap {
                                             @NonNull final String user_agent,
                                             @NonNull final String referer,
                                             @Nullable final String cookie,
-                                            @Nullable final String cookie_delimiter){
+                                            @Nullable final String cookie_delimiter) {
         URL url = null;
         HttpURLConnection cnt = null;
         String response = null;
         Bitmap bmp = null;
         int resp_code = 0;
         try {
+            String realUrl = ProxyUtil.urlProxify(u);//判断并启用代理
+            String realReferer = ProxyUtil.urlProxify(referer);
+
             StringBuilder u_bulider = new StringBuilder();
-            u_bulider.append(u);
+            u_bulider.append(realUrl);
             if (parms != null && parms.length > 0) {
                 u_bulider.append("?").append(TextUtils.join("&", parms));
             }
@@ -52,8 +57,8 @@ public class GetBitmap {
             cnt = (HttpURLConnection) url.openConnection();
             cnt.setDoInput(true);
             cnt.setRequestProperty("User-Agent", user_agent);
-            cnt.setRequestProperty("Referer", referer);
-            if (cookie != null){
+            cnt.setRequestProperty("Referer", realReferer);
+            if (cookie != null) {
                 cnt.setRequestProperty("Cookie", cookie);
             }
             cnt.setRequestMethod("GET");
@@ -61,13 +66,15 @@ public class GetBitmap {
             cnt.setReadTimeout(4000);
             cnt.setConnectTimeout(2000);
             cnt.connect();
+        } catch (ConnectException e1) {//线路无效时连接异常
+            return new HttpConnectionAndCode(-10);
         } catch (Exception e) {
             e.printStackTrace();
             return new HttpConnectionAndCode(-1);
         }
         try {
             resp_code = cnt.getResponseCode();
-            if (resp_code == 302){
+            if (resp_code == 302) {
                 return new HttpConnectionAndCode(cnt, -7, "");
             }
             response = "";
@@ -92,7 +99,7 @@ public class GetBitmap {
             if (cookieman.getCookieStore().getCookies().size() > 0) {
                 List<HttpCookie> cookieList = cookieman.getCookieStore().getCookies();
                 List<String> cookieStringList = new LinkedList<>();
-                for (HttpCookie httpCookie : cookieList){
+                for (HttpCookie httpCookie : cookieList) {
                     String str = httpCookie.getName() + "=" + httpCookie.getValue();
                     cookieStringList.add(str);
                 }
