@@ -5,10 +5,13 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
@@ -17,6 +20,7 @@ import com.telephone.coursetable.Database.AppDatabase;
 import com.telephone.coursetable.Database.User;
 import com.telephone.coursetable.Database.UserDao;
 import com.telephone.coursetable.FunctionMenu;
+import com.telephone.coursetable.Login;
 import com.telephone.coursetable.Login_vpn;
 import com.telephone.coursetable.MainActivity;
 import com.telephone.coursetable.MyApp;
@@ -29,17 +33,16 @@ import java.util.Map;
 public class GradePointActivity extends AppCompatActivity {
 
     private String sid;
-    private String vpn_pwd;
     private String aaw_pwd;
     private ExpandableListView menu_listf;
     private ProgressBar progressBar;
     private TextView tvToast;
     private List<Map.Entry<String, List<Map.Entry<String, String>>>> points_list;
-    private String cookie;
     private AppDatabase appDatabase;
     private UserDao udao;
     private List<User> list_user;
     private User user;
+    private int looptimes;
 
     private volatile boolean visible = true;
     private volatile Intent outdated = null;
@@ -97,7 +100,9 @@ public class GradePointActivity extends AppCompatActivity {
         points_list = new LinkedList<>();
 
         progressBar.setVisibility(View.INVISIBLE);
-        dosearch();
+        looptimes = 0;
+
+        Create_dialog_asking_pwd();
 
         //刷新
         menu_listf.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
@@ -112,17 +117,16 @@ public class GradePointActivity extends AppCompatActivity {
     }
 
     private void dosearch() {
+        final String NAME = "GradePointActivity.dosearch()";
         Processing_error(false);
 
         new Thread(()->{
-
             appDatabase = MyApp.getCurrentAppDB();
             udao = appDatabase.userDao();
             list_user = udao.getActivatedUser();
             user = list_user.get(0);
             sid = user.username;
-            vpn_pwd = user.vpn_password;
-            aaw_pwd = user.aaw_password;
+
             points_list = new LinkedList<>();
 
             runOnUiThread(()->{ progressBar.setVisibility(View.VISIBLE); });
@@ -142,27 +146,49 @@ public class GradePointActivity extends AppCompatActivity {
                 }
             }).start();
 
-            cookie = Login_vpn.wan_vpn_login_text(GradePointActivity.this, sid, vpn_pwd);
-            if ( cookie.contains("fail:") ) {
+            Get_grade_points_array grade_point_array = GradePoint_Test.lan_get_grade_point_array(GradePointActivity.this, sid, aaw_pwd);
+            //密码错误进入判断
+            if (grade_point_array.code != 0) {
                 runOnUiThread(()->{
                     Processing_error(true);
-                    if (cookie.contains("密码错误")) cookie = cookie + " 请重新登录以更新密码！";
-                    Snackbar.make(menu_listf, cookie.substring(5), Snackbar.LENGTH_LONG).setTextColor(Color.WHITE).show();
+                    if (grade_point_array.code == -6) {
+                        Toast.makeText(GradePointActivity.this, getString(R.string.wan_snackbar_outside_test_login_fail), Toast.LENGTH_LONG).show();
+                        //密码不正确，需要重新弹出对话框
+                        Create_dialog_asking_pwd();
+                    }else {
+                        Toast.makeText(GradePointActivity.this, getString(R.string.wan_login_vpn_network_error), Toast.LENGTH_LONG).show();
+                        //网络异常，需要重新查询
+                        Log.e(NAME, "again!");
+                    }
                 });
-                return;
-            }
-            Get_grade_points_array grade_point_array = GradePoint_Test.wan_get_grade_point_array(GradePointActivity.this, cookie, sid, aaw_pwd);
-            if (grade_point_array.message != null) {
-                runOnUiThread(()->{
-                    Processing_error(true);
-                    if (grade_point_array.message.contains("密码错误")) grade_point_array.message = grade_point_array.message + " 请重新登录以更新密码！";
-                    Snackbar.make(menu_listf, grade_point_array.message.substring(5), Snackbar.LENGTH_LONG).setTextColor(Color.WHITE).show();
-                });
-                return;
+            }else if (grade_point_array.message!=null) {
+                Toast.makeText(GradePointActivity.this, getString(R.string.wan_login_vpn_network_error), Toast.LENGTH_LONG).show();
+                //抓取数据过程中失败，重新抓取？
+                Log.e(NAME, "again!");
             }
             runOnUiThread(()->Processing_correct(grade_point_array.grade_points_array));
         }).start();
     }
+
+    private void Create_dialog_asking_pwd(){
+
+        View asking_pwd = getLayoutInflater().inflate(R.layout.dialog_ask_pwd_xfj, null);
+
+        AlertDialog dialog_ask_pwd = Login.getAlertDialog(this,"",
+                (dialogInterface, i) -> {
+                    aaw_pwd = ((EditText)asking_pwd.findViewById(R.id.dialog_pwd_input)).getText().toString();
+                    dosearch();
+                },
+                (dialogInterface, i) -> {
+                    startActivity(new Intent(this, MainActivity.class));
+                },
+                asking_pwd,
+                "登入教务网站", null, null
+        );
+        runOnUiThread(()->{dialog_ask_pwd.show();});
+
+    }
+
 
     private void Processing_error(boolean clickable) {
         tvToast.setVisibility(View.INVISIBLE);
