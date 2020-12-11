@@ -17,6 +17,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.telephone.coursetable.Database.AppDatabase;
+import com.telephone.coursetable.Database.User;
+import com.telephone.coursetable.Database.UserDao;
 import com.telephone.coursetable.FunctionMenu;
 import com.telephone.coursetable.Login_vpn;
 import com.telephone.coursetable.MainActivity;
@@ -35,9 +38,9 @@ import java.util.TimerTask;
 
 public class LibraryActivity extends AppCompatActivity {
 
-    public final static String EXTRA_USERNAME = "com.telephone.coursetable.library.username";
-    public final static String EXTRA_VPN_PASSWORD = "com.telephone.coursetable.library.password";
-    public final static String MESSAGE_STRING = "com.telephone.coursetable.library.message";
+//    public final static String EXTRA_USERNAME = "com.telephone.coursetable.library.username";
+//    public final static String EXTRA_VPN_PASSWORD = "com.telephone.coursetable.library.password";
+//    public final static String MESSAGE_STRING = "com.telephone.coursetable.library.message";
 
     private String username;
     private String password;
@@ -127,19 +130,19 @@ public class LibraryActivity extends AppCompatActivity {
 
 
         Intent intent = getIntent();
-        username = intent.getStringExtra(EXTRA_USERNAME);
-        password = intent.getStringExtra(EXTRA_VPN_PASSWORD);
+//        username = intent.getStringExtra(EXTRA_USERNAME);
+//        password = intent.getStringExtra(EXTRA_VPN_PASSWORD);
 
 //        username = "";
 //        password = "";
 
-        Intent intent_get = getIntent();
-        if ( intent_get.getStringExtra(LibraryActivity.MESSAGE_STRING) != null ) {
-            username = intent_get.getStringExtra(LibraryActivity.EXTRA_USERNAME);
-            password = intent_get.getStringExtra(LibraryActivity.EXTRA_VPN_PASSWORD);
-            etMessage.setText(intent_get.getStringExtra(LibraryActivity.MESSAGE_STRING));
+//        Intent intent_get = getIntent();
+//        if ( intent_get.getStringExtra(LibraryActivity.MESSAGE_STRING) != null ) {
+//            username = intent_get.getStringExtra(LibraryActivity.EXTRA_USERNAME);
+//            password = intent_get.getStringExtra(LibraryActivity.EXTRA_VPN_PASSWORD);
+//            etMessage.setText(intent_get.getStringExtra(LibraryActivity.MESSAGE_STRING));
             doSearch();
-        }
+//        }
 
         btReduce.setEnabled(false);
         btPlus.setEnabled(false);
@@ -179,6 +182,13 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private void doSearch() {
+        AppDatabase appDatabase = MyApp.getCurrentAppDB();
+        UserDao udao = appDatabase.userDao();
+        List<User> list_user = udao.getActivatedUser();
+        User user = list_user.get(0);
+        username = user.username;
+        password = user.vpn_password;
+
         etMessage.clearFocus();
         btReduce.setEnabled(false);
         btPlus.setEnabled(false);
@@ -432,9 +442,9 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void startIntent() {
         Intent intent_send = new Intent(LibraryActivity.this, LibraryActivity.class);
-        intent_send.putExtra( EXTRA_USERNAME, username );
-        intent_send.putExtra( EXTRA_VPN_PASSWORD, password );
-        intent_send.putExtra( MESSAGE_STRING, etMessage.getText().toString() );
+//        intent_send.putExtra( EXTRA_USERNAME, username );
+//        intent_send.putExtra( EXTRA_VPN_PASSWORD, password );
+//        intent_send.putExtra( MESSAGE_STRING, etMessage.getText().toString() );
         startActivity(intent_send);
     }
 
