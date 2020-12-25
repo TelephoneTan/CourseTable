@@ -3,7 +3,7 @@
 ### 仓库迁移
 
 - 此项目已迁移到[桂电1024开源社区](https://github.com/guet1024)，新的`Issue`、`Pull request`请发往新的仓库
-- 此仓库不再维护
+- 此仓库自`2020年12月26日02点27分`起不再维护
 - 新仓库地址：[https://github.com/guet1024/GUET-Schedule-Open](https://github.com/guet1024/GUET-Schedule-Open)
 
 ### 平台
