@@ -1,4 +1,11 @@
 # GUET课程表
+
+### 仓库迁移
+
+- 此项目已迁移到[桂电1024开源社区](https://github.com/guet1024)，新的`Issue`、`Pull request`请发往新的仓库
+- 此仓库不再维护
+- 新仓库地址：[https://github.com/guet1024/GUET-Schedule-Open](https://github.com/guet1024/GUET-Schedule-Open)
+
 ### 平台
 
 📱 Android
